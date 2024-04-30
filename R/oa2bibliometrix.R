@@ -85,7 +85,7 @@ oa2bibliometrix <- function(df) {
   ID <- unlist(lapply(df$concepts, function(l) {
     if (is.logical(l)) return(NA)
 
-    au_collapse(l$display_name[l$score>0])
+    au_collapse(l$display_name[l$score > 0 & l$level > 1.5])
   }))
 
   df <- cbind(AU_info, ID, df)
