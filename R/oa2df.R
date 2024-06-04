@@ -214,24 +214,16 @@ works2df <- function(data, abstract = TRUE, verbose = TRUE,
 
     # authorships and affilitation
     if (!is.null(paper$authorships)) {
-      author <- lapply(paper$authorships, function(l) {
-        l_inst <- l$institutions
-        inst_idx <- lengths(l_inst) > 0
-        if (length(inst_idx) > 0 && any(inst_idx)) {
-          if(use_first_institution) {
+      author <- subs_na(
+        lapply(paper$authorships, function(l) {
+          l_inst <- l$institutions
+          inst_idx <- lengths(l_inst) > 0
+          if (length(inst_idx) > 0 && any(inst_idx)) {
             first_inst <- l_inst[inst_idx][[1]]
             first_inst$lineage <- paste(first_inst$lineage, collapse = ", ")
-            first_inst <- prepend(first_inst, "institution")
           } else {
-            first_inst <- lapply(l_inst[inst_idx], function(x) {
-              tmp <- x
-              tmp$lineage <- paste(x$lineage, collapse = ", ")
-              tibble::as_tibble(prepend(tmp, "institution"))
-            })
-            first_inst <- do.call(rbind, first_inst)
+            first_inst <- empty_inst
           }
-        } else {
-          first_inst <- empty_inst
           first_inst <- prepend(first_inst, "institution")
           aff_raw <- list(
             au_affiliation_raw =
