@@ -81,14 +81,21 @@ oa2bibliometrix <- function(df) {
     paste(shorten_oaid(l), collapse = ";")
   }))
 
-  # Keywords
-  ID <- unlist(lapply(df$concepts, function(l) {
+  # OA_Concepts
+  ID <- unlist(lapply(df$topics, function(l) {
     if (is.logical(l)) return(NA)
 
-    au_collapse(l$display_name[l$score > 0 & l$level > 1.5])
+    au_collapse(l$display_name[l$name == "topic"])
   }))
 
-  df <- cbind(AU_info, ID, df)
+  topic_id <- unlist(lapply(df$topics, function(l) {
+    if (is.logical(l)) return(NA)
+
+    au_collapse_2(l$id[l$name == "topic"])
+  }))
+
+
+  df <- cbind(AU_info, ID, topic_id, df)
 
   df$TI <- toupper(df$display_name)
   df$AB <- toupper(df$ab)
@@ -141,4 +148,8 @@ SR <- function(df) {
 
 au_collapse <- function(x){
   toupper(paste(x, collapse = ";"))
+}
+
+au_collapse_2 <- function(x){
+  paste(x, collapse = ";")
 }
